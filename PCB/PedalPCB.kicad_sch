@@ -2433,16 +2433,6 @@
 	)
 	(wire
 		(pts
-			(xy 119.38 119.38) (xy 121.92 119.38)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3a0d9232-3c6a-424f-a255-e8356ea3017a")
-	)
-	(wire
-		(pts
 			(xy 148.59 99.06) (xy 149.86 99.06)
 		)
 		(stroke
@@ -2563,6 +2553,16 @@
 	)
 	(wire
 		(pts
+			(xy 119.38 129.54) (xy 120.65 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cc7f89ad-1c18-4662-9f64-db11b8459acd")
+	)
+	(wire
+		(pts
 			(xy 166.37 154.94) (xy 168.91 154.94)
 		)
 		(stroke
@@ -2583,13 +2583,13 @@
 	)
 	(wire
 		(pts
-			(xy 119.38 116.84) (xy 121.92 116.84)
+			(xy 119.38 127) (xy 120.65 127)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d0b87818-52f9-4f46-8ded-f534b025f3ff")
+		(uuid "d03b272c-fcfe-4cde-9053-4cc0e97d0ab9")
 	)
 	(wire
 		(pts
@@ -2694,6 +2694,28 @@
 		)
 		(uuid "1927bf09-d291-4cec-ad57-e73a3f988e36")
 	)
+	(label "CanRX"
+		(at 120.65 127 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "342254f5-b951-4c39-8440-092b92aef7da")
+	)
+	(label "CanTX"
+		(at 120.65 129.54 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5d9d7922-09d4-44d6-95c3-d956fa3e018e")
+	)
 	(label "Throttle"
 		(at 121.92 137.16 0)
 		(fields_autoplaced yes)
@@ -2759,28 +2781,6 @@
 			(justify right bottom)
 		)
 		(uuid "ba49dff5-3485-4272-942d-ab78dd5c79fe")
-	)
-	(label "CanTX"
-		(at 121.92 116.84 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "d162189b-3b2f-4f76-a646-195fdc1d50e9")
-	)
-	(label "CanRX"
-		(at 121.92 119.38 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "e26d3ccd-d9a5-45e0-8e8d-e1eb7703b52f")
 	)
 	(label "Break"
 		(at 121.92 134.62 0)
@@ -2884,7 +2884,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal"
 			(at 162.56 127.762 90)
 			(effects
 				(font
@@ -2954,7 +2954,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
 			(at 157.48 184.15 0)
 			(effects
 				(font
@@ -3016,7 +3016,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ESP 32:ESP 32 BAJA"
+		(property "Footprint" "Pedal:ESP 32 BAJA"
 			(at 108.204 129.032 90)
 			(effects
 				(font
@@ -3167,7 +3167,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal"
 			(at 162.56 140.462 90)
 			(effects
 				(font
@@ -3237,7 +3237,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Pedal:JST4Pin"
 			(at 173.99 152.4 0)
 			(effects
 				(font
@@ -3445,7 +3445,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
 			(at 157.48 179.07 0)
 			(effects
 				(font
@@ -3573,7 +3573,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Pedal:1x7 Connectors"
 			(at 165.1 95.25 0)
 			(effects
 				(font
@@ -3667,7 +3667,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
 			(at 157.48 194.31 0)
 			(effects
 				(font
@@ -3728,7 +3728,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal"
 			(at 154.94 140.462 90)
 			(effects
 				(font
@@ -4195,7 +4195,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "CONN_S2B-PH-K-S_JST"
+		(property "Footprint" "Connector_PinHeader_1.00mm:PinHeader_1x02_P1.00mm_Vertical"
 			(at 140.97 74.93 0)
 			(effects
 				(font
@@ -4267,7 +4267,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
 			(at 157.48 189.23 0)
 			(effects
 				(font
@@ -4398,7 +4398,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Pedal:3pin"
 			(at 173.99 125.73 0)
 			(effects
 				(font
@@ -4600,7 +4600,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal"
 			(at 154.94 127.762 90)
 			(effects
 				(font
@@ -4804,7 +4804,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Pedal:3pin"
 			(at 173.99 138.43 0)
 			(effects
 				(font
