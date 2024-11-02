@@ -2553,16 +2553,6 @@
 	)
 	(wire
 		(pts
-			(xy 119.38 129.54) (xy 120.65 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cc7f89ad-1c18-4662-9f64-db11b8459acd")
-	)
-	(wire
-		(pts
 			(xy 166.37 154.94) (xy 168.91 154.94)
 		)
 		(stroke
@@ -2590,6 +2580,16 @@
 			(type default)
 		)
 		(uuid "d03b272c-fcfe-4cde-9053-4cc0e97d0ab9")
+	)
+	(wire
+		(pts
+			(xy 119.38 124.46) (xy 120.65 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d8e50e19-61c3-4062-9d9c-af1116cdcf36")
 	)
 	(wire
 		(pts
@@ -2705,17 +2705,6 @@
 		)
 		(uuid "342254f5-b951-4c39-8440-092b92aef7da")
 	)
-	(label "CanTX"
-		(at 120.65 129.54 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "5d9d7922-09d4-44d6-95c3-d956fa3e018e")
-	)
 	(label "Throttle"
 		(at 121.92 137.16 0)
 		(fields_autoplaced yes)
@@ -2792,6 +2781,17 @@
 			(justify left bottom)
 		)
 		(uuid "f74913f0-2daa-4cd4-b1b3-82a6f64d68d7")
+	)
+	(label "CanTX"
+		(at 120.65 124.46 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f9051249-5642-432e-938b-f92f7cdb1de6")
 	)
 	(symbol
 		(lib_id "power:+5V")
