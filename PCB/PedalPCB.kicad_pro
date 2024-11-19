@@ -431,7 +431,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "PCB.kicad_pro",
+    "filename": "PedalPCB.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -469,7 +469,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "../../Users/nicoa/OneDrive/Desktop/PedalPCB.step",
       "svg": "",
       "vrml": ""
     },

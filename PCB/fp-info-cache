@@ -1,18 +1,4 @@
-23858637501001548
-AHT XX
-AHT 10
-
-
-0
-4
-4
-Arduinos
-Arduino Pro Mini (Aliexpress)
-
-
-0
-35
-35
+23853461656288591
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -54704,13 +54690,6 @@ SMD SMT ceramic resonator filter filter hand-soldering
 0
 3
 3
-Custom DIP
-DIP 16
-
-
-0
-16
-16
 Diode_SMD
 D_0201_0603Metric
 Diode SMD 0201 (0603 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: https://www.vishay.com/docs/20052/crcw0201e3.pdf), generated with kicad-footprint-generator
@@ -63524,13 +63503,6 @@ solder jumper open
 0
 5
 3
-LCD
-1.28_in_Circular_LCD
-
-
-0
-7
-7
 LED_SMD
 LED-APA102-2020
 http://www.led-color.com/upload/201604/APA102-2020%20SMD%20LED.pdf
@@ -84673,6 +84645,13 @@ ESP 32 BAJA
 30
 Pedal
 JST4Pin
+
+
+0
+4
+4
+Pedal
+PowerBoard
 
 
 0
