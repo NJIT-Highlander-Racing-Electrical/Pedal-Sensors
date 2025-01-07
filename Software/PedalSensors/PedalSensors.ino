@@ -15,7 +15,7 @@ int brakePedalAnalogValue = 0;
 void setup() {
 
   // Initialize CAN Functionality
-  //setupCAN(PEDALS);
+  setupCAN(PEDALS);
 
   // Open a Serial port for debugging
   Serial.begin(115200);
