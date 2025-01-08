@@ -1,6 +1,6 @@
 /*********************************************************************************
 *   
-*   BajaCAN.h  -- Version 1.2.8 
+*   BajaCAN.h  -- Version 1.2.10 
 * 
 *   The goal of this BajaCAN header/driver is to enable all subsystems throughout
 *   the vehicle to use the same variables, data types, and functions. That way,
@@ -201,63 +201,64 @@ const int statusPedals_ID = 0x5F;
 // Declarations for all variables to be used here:
 
 // CVT Tachometer
-int primaryRPM;
-int secondaryRPM;
-int primaryTemperature;
-int secondaryTemperature;
+volatile int primaryRPM;
+volatile int secondaryRPM;
+volatile int primaryTemperature;
+volatile int secondaryTemperature;
 
 // Wheel Speed Sensors CAN
-int frontLeftWheelRPM;
-int frontRightWheelRPM;
-int rearLeftWheelRPM;
-int rearRightWheelRPM;
+volatile int frontLeftWheelRPM;
+volatile int frontRightWheelRPM;
+volatile int rearLeftWheelRPM;
+volatile int rearRightWheelRPM;
 
 // Wheel States
-int frontLeftWheelState;
-int frontRightWheelState;
-int rearLeftWheelState;
-int rearRightWheelState;
+volatile int frontLeftWheelState;
+volatile int frontRightWheelState;
+volatile int rearLeftWheelState;
+volatile int rearRightWheelState;
+
 
 // Pedal Sensors CAN
-int gasPedalPercentage;
-int brakePedalPercentage;
+volatile int gasPedalPercentage;
+volatile int brakePedalPercentage;
 
 // Suspension Displacement CAN
-float frontLeftDisplacement;
-float frontRightDisplacement;
-float rearLeftDisplacement;
-float rearRightDisplacement;
+volatile float frontLeftDisplacement;
+volatile float frontRightDisplacement;
+volatile float rearLeftDisplacement;
+volatile float rearRightDisplacement;
 
 // DAS (Data Acquisition System) CAN
-float accelerationX;
-float accelerationY;
-float accelerationZ;
-float gyroscopeRoll;
-float gyroscopePitch;
-float gyroscopeYaw;
-float gpsLatitude;
-float gpsLongitude;
-int gpsTimeHour;
-int gpsTimeMinute;
-int gpsTimeSecond;
-int gpsDateMonth;
-int gpsDateDay;
-int gpsDateYear;
-int gpsAltitude;
-int gpsHeading;
-float gpsVelocity;
-bool sdLoggingActive;
+volatile float accelerationX;
+volatile float accelerationY;
+volatile float accelerationZ;
+volatile float gyroscopeRoll;
+volatile float gyroscopePitch;
+volatile float gyroscopeYaw;
+volatile float gpsLatitude;
+volatile float gpsLongitude;
+volatile int gpsTimeHour;
+volatile int gpsTimeMinute;
+volatile int gpsTimeSecond;
+volatile int gpsDateMonth;
+volatile int gpsDateDay;
+volatile int gpsDateYear;
+volatile int gpsAltitude;
+volatile int gpsHeading;
+volatile float gpsVelocity;
+volatile bool sdLoggingActive;
 
 // Power CAN
 int batteryPercentage;
 
 // Status Bits
-int statusCVT;
-int statusBaseStation;
-int statusDashboard;
-int statusDAS;
-int statusWheels;
-int statusPedals;
+volatile uint8_t statusCVT;
+volatile uint8_t statusBaseStation;
+volatile uint8_t statusDashboard;
+volatile uint8_t statusDAS;
+volatile uint8_t statusWheels;
+volatile uint8_t statusPedals;
 
 // Declaraction for CAN_Task_Code second core program
 void CAN_Task_Code(void* pvParameters);
@@ -316,202 +317,261 @@ void CAN_Task_Code(void* pvParameters) {
     if ((packetSize || CAN.packetId() != -1) && (packetSize != 0)) {
       // received a packet
       packetId = CAN.packetId();  // Get the packet ID
-    }
 
-    // Sort data packet to correct variable based on ID
-    switch (packetId) {
 
-      // Primary RPM Case
-      case primaryRPM_ID:
-        primaryRPM = CAN.parseInt();
-        break;
+      // Sort data packet to correct variable based on ID
+      switch (packetId) {
 
-      // Secondary RPM Case
-      case secondaryRPM_ID:
-        secondaryRPM = CAN.parseInt();
-        break;
+        // Primary RPM Case
+        case primaryRPM_ID:
+          primaryRPM = CAN.parseInt();
+          break;
 
-      // CVT Primary Temperature Case
-      case primaryTemperature_ID:
-        primaryTemperature = CAN.parseInt();
-        break;
+        // Secondary RPM Case
+        case secondaryRPM_ID:
+          secondaryRPM = CAN.parseInt();
+          break;
 
-      // CVT Secondary Temperature Case
-      case secondaryTemperature_ID:
-        secondaryTemperature = CAN.parseInt();
-        break;
+        // CVT Primary Temperature Case
+        case primaryTemperature_ID:
+          primaryTemperature = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors RPM Case
-      case frontLeftWheelRPM_ID:
-        frontLeftWheelRPM = CAN.parseInt();
-        break;
+        // CVT Secondary Temperature Case
+        case secondaryTemperature_ID:
+          secondaryTemperature = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors RPM Case
-      case frontRightWheelRPM_ID:
-        frontRightWheelRPM = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors RPM Case
+        case frontLeftWheelRPM_ID:
+          frontLeftWheelRPM = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors RPM  Case
-      case rearLeftWheelRPM_ID:
-        rearLeftWheelRPM = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors RPM Case
+        case frontRightWheelRPM_ID:
+          frontRightWheelRPM = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors RPM Case
-      case rearRightWheelRPM_ID:
-        rearRightWheelRPM = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors RPM  Case
+        case rearLeftWheelRPM_ID:
+          rearLeftWheelRPM = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors State Case
-      case frontLeftWheelState_ID:
-        frontLeftWheelState = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors RPM Case
+        case rearRightWheelRPM_ID:
+          rearRightWheelRPM = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors State Case
-      case frontRightWheelState_ID:
-        frontRightWheelState = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors State Case
+        case frontLeftWheelState_ID:
+          frontLeftWheelState = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors State Case
-      case rearLeftWheelState_ID:
-        rearLeftWheelState = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors State Case
+        case frontRightWheelState_ID:
+          frontRightWheelState = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors State Case
-      case rearRightWheelState_ID:
-        rearRightWheelState = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors State Case
+        case rearLeftWheelState_ID:
+          rearLeftWheelState = CAN.parseInt();
+          break;
 
-      // Pedal Sensors Case
-      case gasPedalPercentage_ID:
-        gasPedalPercentage = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors State Case
+        case rearRightWheelState_ID:
+          rearRightWheelState = CAN.parseInt();
+          break;
 
-      // Pedal Sensors Case
-      case brakePedalPercentage_ID:
-        brakePedalPercentage = CAN.parseInt();
-        break;
+        // Pedal Sensors Case
+        case gasPedalPercentage_ID:
+          gasPedalPercentage = CAN.parseInt();
+          break;
 
-      // Suspension Displacement Case
-      case frontLeftDisplacement_ID:
-        frontLeftDisplacement = CAN.parseFloat();
-        break;
+        // Pedal Sensors Case
+        case brakePedalPercentage_ID:
+          brakePedalPercentage = CAN.parseInt();
+          break;
 
-      // Suspension Displacement Case
-      case frontRightDisplacement_ID:
-        frontRightDisplacement = CAN.parseFloat();
-        break;
+        // Suspension Displacement Case
+        case frontLeftDisplacement_ID:
+          frontLeftDisplacement = CAN.parseFloat();
+          break;
 
-      // Suspension Displacement Case
-      case rearLeftDisplacement_ID:
-        rearLeftDisplacement = CAN.parseFloat();
-        break;
+        // Suspension Displacement Case
+        case frontRightDisplacement_ID:
+          frontRightDisplacement = CAN.parseFloat();
+          break;
 
-      // Suspension Displacement Case
-      case rearRightDisplacement_ID:
-        rearRightDisplacement = CAN.parseFloat();
-        break;
+        // Suspension Displacement Case
+        case rearLeftDisplacement_ID:
+          rearLeftDisplacement = CAN.parseFloat();
+          break;
 
-      // DAS Accel Case
-      case accelerationX_ID:
-        accelerationX = CAN.parseFloat();
-        break;
+        // Suspension Displacement Case
+        case rearRightDisplacement_ID:
+          rearRightDisplacement = CAN.parseFloat();
+          break;
 
-      // DAS Accel Case
-      case accelerationY_ID:
-        accelerationY = CAN.parseFloat();
-        break;
+        // DAS Accel Case
+        case accelerationX_ID:
+          accelerationX = CAN.parseFloat();
+          break;
 
-      // DAS Accel Case
-      case accelerationZ_ID:
-        accelerationZ = CAN.parseFloat();
-        break;
+        // DAS Accel Case
+        case accelerationY_ID:
+          accelerationY = CAN.parseFloat();
+          break;
 
-      // DAS Gyro Case
-      case gyroscopeRoll_ID:
-        accelerationX = CAN.parseFloat();
-        break;
+        // DAS Accel Case
+        case accelerationZ_ID:
+          accelerationZ = CAN.parseFloat();
+          break;
 
-      // DAS Gyro Case
-      case gyroscopePitch_ID:
-        gyroscopePitch = CAN.parseFloat();
-        break;
+        // DAS Gyro Case
+        case gyroscopeRoll_ID:
+          accelerationX = CAN.parseFloat();
+          break;
 
-      // DAS Gyro Case
-      case gyroscopeYaw_ID:
-        gyroscopeYaw = CAN.parseFloat();
-        break;
+        // DAS Gyro Case
+        case gyroscopePitch_ID:
+          gyroscopePitch = CAN.parseFloat();
+          break;
 
-      // DAS GPS Position Case
-      case gpsLatitude_ID:
-        gpsLatitude = CAN.parseFloat();
-        break;
+        // DAS Gyro Case
+        case gyroscopeYaw_ID:
+          gyroscopeYaw = CAN.parseFloat();
+          break;
 
-      // DAS GPS Position Case
-      case gpsLongitude_ID:
-        gpsLongitude = CAN.parseFloat();
-        break;
+        // DAS GPS Position Case
+        case gpsLatitude_ID:
+          gpsLatitude = CAN.parseFloat();
+          break;
 
-      // DAS GPS Time Case
-      case gpsTimeHour_ID:
-        gpsTimeHour = CAN.parseInt();
-        break;
+        // DAS GPS Position Case
+        case gpsLongitude_ID:
+          gpsLongitude = CAN.parseFloat();
+          break;
 
-      // DAS GPS Time Case
-      case gpsTimeMinute_ID:
-        gpsTimeMinute = CAN.parseInt();
-        break;
+        // DAS GPS Time Case
+        case gpsTimeHour_ID:
+          gpsTimeHour = CAN.parseInt();
+          break;
 
-      // DAS GPS Time Case
-      case gpsTimeSecond_ID:
-        gpsTimeSecond = CAN.parseInt();
-        break;
+        // DAS GPS Time Case
+        case gpsTimeMinute_ID:
+          gpsTimeMinute = CAN.parseInt();
+          break;
 
-      // DAS GPS Date Case
-      case gpsDateMonth_ID:
-        gpsDateMonth = CAN.parseInt();
-        break;
+        // DAS GPS Time Case
+        case gpsTimeSecond_ID:
+          gpsTimeSecond = CAN.parseInt();
+          break;
 
-      // DAS GPS Date Case
-      case gpsDateDay_ID:
-        gpsDateDay = CAN.parseInt();
-        break;
+        // DAS GPS Date Case
+        case gpsDateMonth_ID:
+          gpsDateMonth = CAN.parseInt();
+          break;
 
-      // DAS GPS Date Case
-      case gpsDateYear_ID:
-        gpsDateYear = CAN.parseInt();
-        break;
+        // DAS GPS Date Case
+        case gpsDateDay_ID:
+          gpsDateDay = CAN.parseInt();
+          break;
 
-      // DAS GPS Altitude Case
-      case gpsAltitude_ID:
-        gpsAltitude = CAN.parseInt();
-        break;
+        // DAS GPS Date Case
+        case gpsDateYear_ID:
+          gpsDateYear = CAN.parseInt();
+          break;
 
-      // DAS GPS Heading Case
-      case gpsHeading_ID:
-        gpsHeading = CAN.parseInt();
-        break;
+        // DAS GPS Altitude Case
+        case gpsAltitude_ID:
+          gpsAltitude = CAN.parseInt();
+          break;
 
-      // DAS GPS Velocity Case
-      case gpsVelocity_ID:
-        gpsVelocity = CAN.parseFloat();
-        break;
+        // DAS GPS Heading Case
+        case gpsHeading_ID:
+          gpsHeading = CAN.parseInt();
+          break;
 
-      // DAS SD Logging Active Case
-      case sdLoggingActive_ID:
-        sdLoggingActive = CAN.parseInt();
-        break;
+        // DAS GPS Velocity Case
+        case gpsVelocity_ID:
+          gpsVelocity = CAN.parseFloat();
+          break;
 
-      // Battery Percentage Case
-      case batteryPercentage_ID:
-        batteryPercentage = CAN.parseInt();
-        break;
+        // DAS SD Logging Active Case
+        case sdLoggingActive_ID:
+          sdLoggingActive = CAN.parseInt();
+          break;
 
-      // Status Bit Case
-      case statusCVT_ID:
-        statusCVT = CAN.parseInt();
-        break;
+        // Battery Percentage Case
+        case batteryPercentage_ID:
+          batteryPercentage = CAN.parseInt();
+          break;
 
-      // Status Bit Case
+        // Status Bit Case
+        case statusCVT_ID:
+
+          // If this packet was a RTR and we are the proper recipient, return the requested data
+          if (CAN.packetRtr() && (currentSubsystem == CVT)) {
+            CAN.beginPacket(statusCVT_ID);
+            CAN.print(statusCVT);
+            CAN.endPacket();
+          } else if (CAN.packetRtr() && currentSubsystem != CVT) {
+            // We received an RTR but we are not the intended recipient, don't do anything
+          }
+          // Otherwise if it was not an RTR just save the data to our variable
+          else {
+            statusCVT = CAN.parseInt();
+          }
+          break;
+
+
+
+          // Status Bit Cases
+
+        case statusDAS_ID:
+
+          // If this packet was a RTR and we are the proper recipient, return the requested data
+          if (CAN.packetRtr() && (currentSubsystem == DAS)) {
+            CAN.beginPacket(statusDAS_ID);
+            CAN.print(statusDAS);
+            CAN.endPacket();
+          }
+          // Otherwise just save the data to our variable
+          else {
+            statusDAS = CAN.parseInt();
+          }
+          break;
+
+        case statusWheels_ID:
+
+          // If this packet was a RTR and we are the proper recipient, return the requested data
+          if (CAN.packetRtr() && (currentSubsystem == WHEEL_SPEED)) {
+            CAN.beginPacket(statusWheels_ID);
+            CAN.print(statusWheels);
+            CAN.endPacket();
+          }
+          // Otherwise just save the data to our variable
+          else {
+            statusWheels = CAN.parseInt();
+          }
+          break;
+
+        case statusPedals_ID:
+
+          // If this packet was a RTR and we are the proper recipient, return the requested data
+          if (CAN.packetRtr() && (currentSubsystem == PEDALS)) {
+            CAN.beginPacket(statusPedals_ID);
+            CAN.print(statusPedals);
+            CAN.endPacket();
+          }
+          // Otherwise just save the data to our variable
+          else {
+            statusPedals = CAN.parseInt();
+          }
+          break;
+          /*
+
+        // Status Bit Case
       case statusBaseStation_ID:
         statusBaseStation = CAN.parseInt();
         break;
@@ -520,27 +580,17 @@ void CAN_Task_Code(void* pvParameters) {
       case statusDashboard_ID:
         statusDashboard = CAN.parseInt();
         break;
-
-      // Status Bit Case
-      case statusDAS_ID:
-        statusDAS = CAN.parseInt();
-        break;
-
-      // Status Bit Case
-      case statusWheels_ID:
-        statusWheels = CAN.parseInt();
-        break;
-
-      // Status Bit Case
-      case statusPedals_ID:
-        statusPedals = CAN.parseInt();
-        break;
+        */
+      }
     }
 
 
     if ((millis() - lastCanSendTime) > canSendInterval) {
 
       lastCanSendTime = millis();
+
+      // The following delay is placed before anything is sent so that any RTR's we send will be received back without issue
+      delay(canSendInterval / 2);  // Delay for half of our send interval. This should allow Watchdog to reset during IDLE without interfering with the functionality of the program. For the default interval (100ms), we provide a 50ms delay
 
       switch (currentSubsystem) {
 
@@ -582,7 +632,7 @@ void CAN_Task_Code(void* pvParameters) {
           CAN.print(rearRightWheelRPM);
           CAN.endPacket();
 
-        // WHEEL STATES
+          // WHEEL STATES
           CAN.beginPacket(frontLeftWheelState_ID);
           CAN.print(frontLeftWheelState);
           CAN.endPacket();
@@ -627,8 +677,6 @@ void CAN_Task_Code(void* pvParameters) {
           CAN.print(brakePedalPercentage);
           CAN.endPacket();
           break;
-
-
 
         case DAS:
           CAN.beginPacket(accelerationX_ID);
@@ -714,7 +762,22 @@ void CAN_Task_Code(void* pvParameters) {
           break;
 
         case BASE_STATION:
-          // Code for Base Station messages, if any, would go here
+
+          // The middle number for all of these is three because we are printing three digits to the CAN-Bus
+          // Since we use CAN.print, we are sending ASCII numbers that get parsed back into an integer.
+          // Since we are using a uint8_t, an 8-bit int, we can have at most 255, which is three digits.
+
+          CAN.beginPacket(statusCVT_ID, 3, true);
+          CAN.endPacket();
+
+          CAN.beginPacket(statusWheels_ID, 3, true);
+          CAN.endPacket();
+
+          CAN.beginPacket(statusPedals_ID, 3, true);
+          CAN.endPacket();
+
+          CAN.beginPacket(statusDAS_ID, 3, true);
+          CAN.endPacket();
           break;
       }
 
