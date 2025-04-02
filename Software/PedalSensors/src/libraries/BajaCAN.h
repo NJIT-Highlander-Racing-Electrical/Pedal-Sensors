@@ -1,6 +1,6 @@
 /*********************************************************************************
 *   
-*   BajaCAN.h  -- Version 1.3.2
+*   BajaCAN.h  -- Version 1.3.4
 * 
 *   The goal of this BajaCAN header/driver is to enable all subsystems throughout
 *   the vehicle to use the same variables, data types, and functions. That way,
@@ -113,7 +113,7 @@
 #define CAN_RX_GPIO 26
 
 // Number of milliseconds to wait between transmissions
-int canSendInterval = 100;
+int canSendInterval = 50;
 // Definition to log the last time that a CAN message was sent
 int lastCanSendTime = 0;
 
@@ -498,7 +498,7 @@ void CAN_Task_Code(void* pvParameters) {
 
         // DAS GPS Velocity Case
         case gpsVelocity_ID:
-          gpsVelocity = CAN.parseFloat();
+          gpsVelocity = CAN.parseInt();
           break;
 
         // DAS Battery Percentage Case
