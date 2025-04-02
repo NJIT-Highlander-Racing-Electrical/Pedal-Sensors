@@ -1,6 +1,6 @@
 /*********************************************************************************
 *   
-*   BajaCAN.h  -- Version 1.2.14
+*   BajaCAN.h  -- Version 1.3.2
 * 
 *   The goal of this BajaCAN header/driver is to enable all subsystems throughout
 *   the vehicle to use the same variables, data types, and functions. That way,
@@ -183,10 +183,11 @@ const int gpsDateYear_ID = 0x36;
 const int gpsAltitude_ID = 0x37;
 const int gpsHeading_ID = 0x38;
 const int gpsVelocity_ID = 0x39;
-const int sdLoggingActive_ID = 0x3A;
+const int batteryPercentage_ID = 0x3A;
 
-// Power CAN IDs
-const int batteryPercentage_ID = 0x47;
+// Dashboard CAN IDs
+const int sdLoggingActive_ID = 0x42;
+const int dataScreenshotFlag_ID = 0x43;
 
 
 // Status Bits
@@ -246,11 +247,14 @@ volatile int gpsDateDay;
 volatile int gpsDateYear;
 volatile int gpsAltitude;
 volatile int gpsHeading;
-volatile float gpsVelocity;
-volatile bool sdLoggingActive;
+volatile int gpsVelocity;
+volatile int batteryPercentage;
 
-// Power CAN
-int batteryPercentage;
+// Dashboard CAN
+volatile int sdLoggingActive;
+volatile int dataScreenshotFlag;
+
+
 
 // Status Bits
 volatile uint8_t statusCVT;
@@ -497,17 +501,24 @@ void CAN_Task_Code(void* pvParameters) {
           gpsVelocity = CAN.parseFloat();
           break;
 
-        // DAS SD Logging Active Case
-        case sdLoggingActive_ID:
-          sdLoggingActive = CAN.parseInt();
-          break;
-
-        // Battery Percentage Case
+        // DAS Battery Percentage Case
         case batteryPercentage_ID:
           batteryPercentage = CAN.parseInt();
           break;
 
-        // Status Bit Case
+        // Dashboard SD Logging Active Case
+        case sdLoggingActive_ID:
+          sdLoggingActive = CAN.parseInt();
+          break;
+
+        // Dashboard Data Screenshot Flag Case
+        case dataScreenshotFlag_ID:
+          dataScreenshotFlag = CAN.parseInt();
+          break;
+
+        
+        // Status Bit Cases 
+        
         case statusCVT_ID:
 
           // If this packet was a RTR and we are the proper recipient, return the requested data
@@ -515,7 +526,7 @@ void CAN_Task_Code(void* pvParameters) {
             CAN.beginPacket(statusCVT_ID);
             CAN.print(statusCVT);
             CAN.endPacket();
-          } else if (CAN.packetRtr() && currentSubsystem != CVT) {
+          } else if (CAN.packetRtr() && (currentSubsystem != CVT)) {
             // We received an RTR but we are not the intended recipient, don't do anything
           }
           // Otherwise if it was not an RTR just save the data to our variable
@@ -524,10 +535,6 @@ void CAN_Task_Code(void* pvParameters) {
           }
           break;
 
-
-
-          // Status Bit Cases
-
         case statusDAS_ID:
 
           // If this packet was a RTR and we are the proper recipient, return the requested data
@@ -535,7 +542,7 @@ void CAN_Task_Code(void* pvParameters) {
             CAN.beginPacket(statusDAS_ID);
             CAN.print(statusDAS);
             CAN.endPacket();
-          } else if (CAN.packetRtr() && currentSubsystem != DAS) {
+          } else if (CAN.packetRtr() && (currentSubsystem != DAS)) {
             // We received an RTR but we are not the intended recipient, don't do anything
           }
           // Otherwise if it was not an RTR just save the data to our variable
@@ -544,6 +551,7 @@ void CAN_Task_Code(void* pvParameters) {
           }
           break;
 
+        
         case statusWheels_ID:
 
           // If this packet was a RTR and we are the proper recipient, return the requested data
@@ -551,7 +559,7 @@ void CAN_Task_Code(void* pvParameters) {
             CAN.beginPacket(statusWheels_ID);
             CAN.print(statusWheels);
             CAN.endPacket();
-          } else if (CAN.packetRtr() && currentSubsystem != WHEEL_SPEED) {
+          } else if (CAN.packetRtr() && (currentSubsystem != WHEEL_SPEED)) {
             // We received an RTR but we are not the intended recipient, don't do anything
           }
           // Otherwise if it was not an RTR just save the data to our variable
@@ -567,7 +575,7 @@ void CAN_Task_Code(void* pvParameters) {
             CAN.beginPacket(statusPedals_ID);
             CAN.print(statusPedals);
             CAN.endPacket();
-          } else if (CAN.packetRtr() && currentSubsystem != PEDALS) {
+          } else if (CAN.packetRtr() && (currentSubsystem != PEDALS)) {
             // We received an RTR but we are not the intended recipient, don't do anything
           }
           // Otherwise if it was not an RTR just save the data to our variable
@@ -575,18 +583,47 @@ void CAN_Task_Code(void* pvParameters) {
             statusPedals = CAN.parseInt();
           }
           break;
-          /*
 
-        // Status Bit Case
-      case statusBaseStation_ID:
-        statusBaseStation = CAN.parseInt();
-        break;
+        case statusDashboard_ID:
 
-      // Status Bit Case
-      case statusDashboard_ID:
-        statusDashboard = CAN.parseInt();
-        break;
-        */
+          // If this packet was a RTR and we are the proper recipient, return the requested data
+          if (CAN.packetRtr() && (currentSubsystem == DASHBOARD)) {
+            CAN.beginPacket(statusDashboard_ID);
+            CAN.print(statusDashboard);
+            CAN.endPacket();
+          } else if (CAN.packetRtr() && (currentSubsystem != DASHBOARD)) {
+            // We received an RTR but we are not the intended recipient, don't do anything
+          }
+          // Otherwise if it was not an RTR just save the data to our variable
+          else {
+            statusDashboard = CAN.parseInt();
+          }
+          break;
+
+
+        case statusBaseStation_ID:
+
+         // If this packet was a RTR and we are the proper recipient, return the requested data
+          if (CAN.packetRtr() && (currentSubsystem == BASE_STATION)) {
+            CAN.beginPacket(statusBaseStation_ID);
+            CAN.print(statusBaseStation);
+            CAN.endPacket();
+          } else if (CAN.packetRtr() && (currentSubsystem != BASE_STATION)) {
+            // We received an RTR but we are not the intended recipient, don't do anything
+          }
+          // Otherwise if it was not an RTR just save the data to our variable
+          else {
+            statusBaseStation = CAN.parseInt();
+          }
+          break;
+
+
+        default:
+          // Serial.print("Unrecognized CAN ID: ");
+          // Serial.println(packetId);
+          break;
+
+     
       }
     }
 
@@ -595,7 +632,6 @@ void CAN_Task_Code(void* pvParameters) {
 
       lastCanSendTime = millis();
 
-      // The following delay is placed before anything is sent so that any RTR's we send will be received back without issue
       delay(canSendInterval / 2);  // Delay for half of our send interval. This should allow Watchdog to reset during IDLE without interfering with the functionality of the program. For the default interval (100ms), we provide a 50ms delay
 
       switch (currentSubsystem) {
@@ -763,6 +799,11 @@ void CAN_Task_Code(void* pvParameters) {
           CAN.beginPacket(sdLoggingActive_ID);
           CAN.print(sdLoggingActive);
           CAN.endPacket();
+
+          CAN.beginPacket(dataScreenshotFlag_ID);
+          CAN.print(dataScreenshotFlag);
+          CAN.endPacket();
+          
           break;
 
         case BASE_STATION:
@@ -782,6 +823,10 @@ void CAN_Task_Code(void* pvParameters) {
 
           CAN.beginPacket(statusDAS_ID, 3, true);
           CAN.endPacket();
+
+          CAN.beginPacket(statusDashboard_ID, 3, true);
+          CAN.endPacket();
+          
           break;
       }
     }
