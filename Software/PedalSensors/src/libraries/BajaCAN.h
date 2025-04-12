@@ -1,6 +1,6 @@
 /*********************************************************************************
 *   
-*   BajaCAN.h  -- Version 1.3.4
+*   BajaCAN.h  -- Version 1.3.6
 * 
 *   The goal of this BajaCAN header/driver is to enable all subsystems throughout
 *   the vehicle to use the same variables, data types, and functions. That way,
@@ -158,6 +158,8 @@ const int rearRightWheelState_ID = 0x12;
 // Pedal Sensors CAN IDs
 const int gasPedalPercentage_ID = 0x15;
 const int brakePedalPercentage_ID = 0x16;
+const int frontBrakePressure_ID = 0x17;
+const int rearBrakePressure_ID = 0x18;
 
 // Suspension Displacement CAN IDs
 const int frontLeftDisplacement_ID = 0x1F;
@@ -223,6 +225,9 @@ volatile int rearRightWheelState;
 // Pedal Sensors CAN
 volatile int gasPedalPercentage;
 volatile int brakePedalPercentage;
+volatile int frontBrakePressure;
+volatile int rearBrakePressure;
+
 
 // Suspension Displacement CAN
 volatile float frontLeftDisplacement;
@@ -394,6 +399,16 @@ void CAN_Task_Code(void* pvParameters) {
         // Pedal Sensors Case
         case brakePedalPercentage_ID:
           brakePedalPercentage = CAN.parseInt();
+          break;
+
+        // Pedal Sensors Case
+        case frontBrakePressure_ID:
+          frontBrakePressure = CAN.parseInt();
+          break;
+
+        // Pedal Sensors Case
+        case rearBrakePressure_ID:
+          rearBrakePressure = CAN.parseInt();
           break;
 
         // Suspension Displacement Case
@@ -718,6 +733,15 @@ void CAN_Task_Code(void* pvParameters) {
           CAN.beginPacket(brakePedalPercentage_ID);
           CAN.print(brakePedalPercentage);
           CAN.endPacket();
+
+          CAN.beginPacket(frontBrakePressure_ID);
+          CAN.print(frontBrakePressure);
+          CAN.endPacket();
+
+          CAN.beginPacket(rearBrakePressure_ID);
+          CAN.print(rearBrakePressure);
+          CAN.endPacket();
+          
           break;
 
         case DAS:
@@ -746,11 +770,11 @@ void CAN_Task_Code(void* pvParameters) {
           CAN.endPacket();
 
           CAN.beginPacket(gpsLatitude_ID);
-          CAN.print(gpsLatitude);
+          CAN.print(gpsLatitude, 6);
           CAN.endPacket();
 
           CAN.beginPacket(gpsLongitude_ID);
-          CAN.print(gpsLongitude);
+          CAN.print(gpsLongitude, 6);
           CAN.endPacket();
 
           CAN.beginPacket(gpsTimeHour_ID);
