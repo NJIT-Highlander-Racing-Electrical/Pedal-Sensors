@@ -28,7 +28,7 @@ void setup() {
   setupCAN(PEDALS);
 
   // Open a Serial port for debugging
-  Serial.begin(115200);
+  Serial.begin(460800);
 
   pinMode(frontBrakePressurePin, INPUT);
   pinMode(rearBrakePressurePin, INPUT);
