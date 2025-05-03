@@ -1,6 +1,6 @@
 /*********************************************************************************
 *   
-*   BajaCAN.h  -- Version 1.3.6
+*   BajaCAN.h  -- Version 1.4.0
 * 
 *   The goal of this BajaCAN header/driver is to enable all subsystems throughout
 *   the vehicle to use the same variables, data types, and functions. That way,
@@ -144,10 +144,10 @@ const int primaryTemperature_ID = 0x03;
 const int secondaryTemperature_ID = 0x04;
 
 // Wheel Speed Sensors CAN IDs
-const int frontLeftWheelRPM_ID = 0x0B;
-const int frontRightWheelRPM_ID = 0x0C;
-const int rearLeftWheelRPM_ID = 0x0D;
-const int rearRightWheelRPM_ID = 0x0E;
+const int frontLeftWheelSpeed_ID = 0x0B;
+const int frontRightWheelSpeed_ID = 0x0C;
+const int rearLeftWheelSpeed_ID = 0x0D;
+const int rearRightWheelSpeed_ID = 0x0E;
 
 // Wheel Speed States CAN IDs (for slip and skid)
 const int frontLeftWheelState_ID = 0x0F;
@@ -210,10 +210,10 @@ volatile int primaryTemperature;
 volatile int secondaryTemperature;
 
 // Wheel Speed Sensors CAN
-volatile int frontLeftWheelRPM;
-volatile int frontRightWheelRPM;
-volatile int rearLeftWheelRPM;
-volatile int rearRightWheelRPM;
+volatile float frontLeftWheelSpeed;
+volatile float frontRightWheelSpeed;
+volatile float rearLeftWheelSpeed;
+volatile float rearRightWheelSpeed;
 
 // Wheel States
 volatile int frontLeftWheelState;
@@ -352,23 +352,23 @@ void CAN_Task_Code(void* pvParameters) {
           break;
 
         // Wheel Speed Sensors RPM Case
-        case frontLeftWheelRPM_ID:
-          frontLeftWheelRPM = CAN.parseInt();
+        case frontLeftWheelSpeed_ID:
+          frontLeftWheelSpeed = CAN.parseFloat();
           break;
 
         // Wheel Speed Sensors RPM Case
-        case frontRightWheelRPM_ID:
-          frontRightWheelRPM = CAN.parseInt();
+        case frontRightWheelSpeed_ID:
+          frontRightWheelSpeed = CAN.parseFloat();
           break;
 
         // Wheel Speed Sensors RPM  Case
-        case rearLeftWheelRPM_ID:
-          rearLeftWheelRPM = CAN.parseInt();
+        case rearLeftWheelSpeed_ID:
+          rearLeftWheelSpeed = CAN.parseFloat();
           break;
 
         // Wheel Speed Sensors RPM Case
-        case rearRightWheelRPM_ID:
-          rearRightWheelRPM = CAN.parseInt();
+        case rearRightWheelSpeed_ID:
+          rearRightWheelSpeed = CAN.parseFloat();
           break;
 
         // Wheel Speed Sensors State Case
@@ -673,20 +673,20 @@ void CAN_Task_Code(void* pvParameters) {
         case WHEEL_SPEED:
 
           // WHEEL RPMs
-          CAN.beginPacket(frontLeftWheelRPM_ID);
-          CAN.print(frontLeftWheelRPM);
+          CAN.beginPacket(frontLeftWheelSpeed_ID);
+          CAN.print(frontLeftWheelSpeed);
           CAN.endPacket();
 
-          CAN.beginPacket(frontRightWheelRPM_ID);
-          CAN.print(frontRightWheelRPM);
+          CAN.beginPacket(frontRightWheelSpeed_ID);
+          CAN.print(frontRightWheelSpeed);
           CAN.endPacket();
 
-          CAN.beginPacket(rearLeftWheelRPM_ID);
-          CAN.print(rearLeftWheelRPM);
+          CAN.beginPacket(rearLeftWheelSpeed_ID);
+          CAN.print(rearLeftWheelSpeed);
           CAN.endPacket();
 
-          CAN.beginPacket(rearRightWheelRPM_ID);
-          CAN.print(rearRightWheelRPM);
+          CAN.beginPacket(rearRightWheelSpeed_ID);
+          CAN.print(rearRightWheelSpeed);
           CAN.endPacket();
 
           // WHEEL STATES
