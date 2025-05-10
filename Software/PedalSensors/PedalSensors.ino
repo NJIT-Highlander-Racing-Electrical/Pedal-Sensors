@@ -104,7 +104,7 @@ void loop() {
   if (gasPedalAnalogValue < gasPedalAnalogMin) gasPedalAnalogValue = gasPedalAnalogMin;
   if (gasPedalAnalogValue > gasPedalAnalogMax) gasPedalAnalogValue = gasPedalAnalogMax;
 
-  gasPedalPercentage = floatMap(gasPedalAnalogValue, gasPedalAnalogMin, gasPedalAnalogMax, 0, 100);
+  gasPedalPercentage = map(gasPedalAnalogValue, gasPedalAnalogMin, gasPedalAnalogMax, 0, 100);
   Serial.print("gasPedalAnalogValue:");
   Serial.print(gasPedalAnalogValue);
   Serial.print(", ");
