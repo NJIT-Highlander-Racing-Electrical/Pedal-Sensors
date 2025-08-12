@@ -1,6 +1,6 @@
 /*********************************************************************************
 *
-*   BajaCAN.h  -- Version 1.4.1
+*   BajaCAN.h  -- Version 1.5.0
 *
 *   The goal of this BajaCAN header/driver is to enable all subsystems throughout
 *   the vehicle to use the same variables, data types, and functions. That way,
@@ -121,8 +121,7 @@ int lastCanSendTime = 0;
 TaskHandle_t CAN_Task;
 
 // Defines a list of acceptable subsystem names that can be used in setupCAN(<subsystem>)
-enum Subsystem
-{
+enum Subsystem {
   CVT,
   DASHBOARD,
   DAS,
@@ -267,8 +266,7 @@ volatile uint8_t statusPedals;
 void CAN_Task_Code(void *pvParameters);
 
 // This setupCAN() function should be called in void setup() of the main program
-void setupCAN(Subsystem name, int sendInterval = canSendInterval, int rxGpio = CAN_RX_GPIO, int txGpio = CAN_TX_GPIO, int baudRate = CAN_BAUD_RATE)
-{
+void setupCAN(Subsystem name, int sendInterval = canSendInterval, int rxGpio = CAN_RX_GPIO, int txGpio = CAN_TX_GPIO, int baudRate = CAN_BAUD_RATE) {
 
   // Assign currentSubsystem based on passed through name
   currentSubsystem = name;
@@ -280,26 +278,23 @@ void setupCAN(Subsystem name, int sendInterval = canSendInterval, int rxGpio = C
   // Reconfigure pins used for CAN from defaults
   CAN.setPins(rxGpio, txGpio);
 
-  if (!CAN.begin(baudRate))
-  {
+  if (!CAN.begin(baudRate)) {
     Serial.println("Starting CAN failed!");
     while (1)
       ;
-  }
-  else
-  {
+  } else {
     Serial.println("CAN Initialized");
   }
 
   // create a task that will be executed in the CAN_Task_Code() function, with priority 1 and executed on core 0
   xTaskCreatePinnedToCore(
-      CAN_Task_Code, /* Task function. */
-      "CAN_Task",    /* name of task. */
-      10000,         /* Stack size of task */
-      NULL,          /* parameter of the task */
-      1,             /* priority of the task */
-      &CAN_Task,     /* Task handle to keep track of created task */
-      0);            /* pin task to core 0 */
+    CAN_Task_Code, /* Task function. */
+    "CAN_Task",    /* name of task. */
+    10000,         /* Stack size of task */
+    NULL,          /* parameter of the task */
+    1,             /* priority of the task */
+    &CAN_Task,     /* Task handle to keep track of created task */
+    0);            /* pin task to core 0 */
 
   // Delay for stability; may not be necessary but only executes once
   delay(500);
@@ -307,460 +302,425 @@ void setupCAN(Subsystem name, int sendInterval = canSendInterval, int rxGpio = C
 
 // CAN_Task executes on secondary core of ESP32 and its sole function is CAN
 // All other processing is done on primary core
-void CAN_Task_Code(void *pvParameters)
-{
+void CAN_Task_Code(void *pvParameters) {
   Serial.print("CAN_Task running on core ");
   Serial.println(xPortGetCoreID());
 
-  for (;;)
-  {
+  for (;;) {
 
     // Check if a packet has been received
     // Returns the packet size in bytes or 0 if no packet received
     int packetSize = CAN.parsePacket();
     int packetId;
 
-    Serial.print("packetid: ");
-    Serial.println(packetId);
-
-    if ((packetSize > 0) || (CAN.packetRtr() && CAN.packetId() != -1))
-    {
+    if ((packetSize > 0) || (CAN.packetRtr() && CAN.packetId() != -1)) {
       // received a packet
-      packetId = CAN.packetId(); // Get the packet ID
+      packetId = CAN.packetId();  // Get the packet ID
 
       // Sort data packet to correct variable based on ID
-      switch (packetId)
-      {
+      switch (packetId) {
 
-      // Primary RPM Case
-      case primaryRPM_ID:
-        primaryRPM = CAN.parseInt();
-        break;
+        // Primary RPM Case
+        case primaryRPM_ID:
+          primaryRPM = CAN.parseInt();
+          break;
 
-      // Secondary RPM Case
-      case secondaryRPM_ID:
-        secondaryRPM = CAN.parseInt();
-        break;
+        // Secondary RPM Case
+        case secondaryRPM_ID:
+          secondaryRPM = CAN.parseInt();
+          break;
 
-      // CVT Primary Temperature Case
-      case primaryTemperature_ID:
-        primaryTemperature = CAN.parseInt();
-        break;
+        // CVT Primary Temperature Case
+        case primaryTemperature_ID:
+          primaryTemperature = CAN.parseInt();
+          break;
 
-      // CVT Secondary Temperature Case
-      case secondaryTemperature_ID:
-        secondaryTemperature = CAN.parseInt();
-        break;
+        // CVT Secondary Temperature Case
+        case secondaryTemperature_ID:
+          secondaryTemperature = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors RPM Case
-      case frontLeftWheelSpeed_ID:
-        frontLeftWheelSpeed = CAN.parseFloat();
-        break;
+        // Wheel Speed Sensors RPM Case
+        case frontLeftWheelSpeed_ID:
+          frontLeftWheelSpeed = CAN.parseFloat();
+          break;
 
-      // Wheel Speed Sensors RPM Case
-      case frontRightWheelSpeed_ID:
-        frontRightWheelSpeed = CAN.parseFloat();
-        break;
+        // Wheel Speed Sensors RPM Case
+        case frontRightWheelSpeed_ID:
+          frontRightWheelSpeed = CAN.parseFloat();
+          break;
 
-      // Wheel Speed Sensors RPM  Case
-      case rearLeftWheelSpeed_ID:
-        rearLeftWheelSpeed = CAN.parseFloat();
-        break;
+        // Wheel Speed Sensors RPM  Case
+        case rearLeftWheelSpeed_ID:
+          rearLeftWheelSpeed = CAN.parseFloat();
+          break;
 
-      // Wheel Speed Sensors RPM Case
-      case rearRightWheelSpeed_ID:
-        rearRightWheelSpeed = CAN.parseFloat();
-        break;
+        // Wheel Speed Sensors RPM Case
+        case rearRightWheelSpeed_ID:
+          rearRightWheelSpeed = CAN.parseFloat();
+          break;
 
-      // Wheel Speed Sensors State Case
-      case frontLeftWheelState_ID:
-        frontLeftWheelState = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors State Case
+        case frontLeftWheelState_ID:
+          frontLeftWheelState = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors State Case
-      case frontRightWheelState_ID:
-        frontRightWheelState = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors State Case
+        case frontRightWheelState_ID:
+          frontRightWheelState = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors State Case
-      case rearLeftWheelState_ID:
-        rearLeftWheelState = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors State Case
+        case rearLeftWheelState_ID:
+          rearLeftWheelState = CAN.parseInt();
+          break;
 
-      // Wheel Speed Sensors State Case
-      case rearRightWheelState_ID:
-        rearRightWheelState = CAN.parseInt();
-        break;
+        // Wheel Speed Sensors State Case
+        case rearRightWheelState_ID:
+          rearRightWheelState = CAN.parseInt();
+          break;
 
-      // Pedal Sensors Case
-      case gasPedalPercentage_ID:
-        gasPedalPercentage = CAN.parseInt();
-        break;
+        // Pedal Sensors Case
+        case gasPedalPercentage_ID:
+          gasPedalPercentage = CAN.parseInt();
+          break;
 
-      // Pedal Sensors Case
-      case brakePedalPercentage_ID:
-        brakePedalPercentage = CAN.parseInt();
-        break;
+        // Pedal Sensors Case
+        case brakePedalPercentage_ID:
+          brakePedalPercentage = CAN.parseInt();
+          break;
 
-      // Pedal Sensors Case
-      case frontBrakePressure_ID:
-        frontBrakePressure = CAN.parseInt();
-        break;
+        // Pedal Sensors Case
+        case frontBrakePressure_ID:
+          frontBrakePressure = CAN.parseInt();
+          break;
 
-      // Pedal Sensors Case
-      case rearBrakePressure_ID:
-        rearBrakePressure = CAN.parseInt();
-        break;
+        // Pedal Sensors Case
+        case rearBrakePressure_ID:
+          rearBrakePressure = CAN.parseInt();
+          break;
 
-      // Suspension Displacement Case
-      case frontLeftDisplacement_ID:
-        frontLeftDisplacement = CAN.parseFloat();
-        break;
+        // Suspension Displacement Case
+        case frontLeftDisplacement_ID:
+          frontLeftDisplacement = CAN.parseFloat();
+          break;
 
-      // Suspension Displacement Case
-      case frontRightDisplacement_ID:
-        frontRightDisplacement = CAN.parseFloat();
-        break;
+        // Suspension Displacement Case
+        case frontRightDisplacement_ID:
+          frontRightDisplacement = CAN.parseFloat();
+          break;
 
-      // Suspension Displacement Case
-      case rearLeftDisplacement_ID:
-        rearLeftDisplacement = CAN.parseFloat();
-        break;
+        // Suspension Displacement Case
+        case rearLeftDisplacement_ID:
+          rearLeftDisplacement = CAN.parseFloat();
+          break;
 
-      // Suspension Displacement Case
-      case rearRightDisplacement_ID:
-        rearRightDisplacement = CAN.parseFloat();
-        break;
+        // Suspension Displacement Case
+        case rearRightDisplacement_ID:
+          rearRightDisplacement = CAN.parseFloat();
 
-      // DAS Accel Case
-      case accelerationX_ID:
-        accelerationX = CAN.parseFloat();
-        break;
+          break;
 
-      // DAS Accel Case
-      case accelerationY_ID:
-        accelerationY = CAN.parseFloat();
-        break;
+        // DAS Accel Case
+        case accelerationX_ID:
+          accelerationX = CAN.parseFloat();
+          break;
 
-      // DAS Accel Case
-      case accelerationZ_ID:
-        accelerationZ = CAN.parseFloat();
-        break;
+        // DAS Accel Case
+        case accelerationY_ID:
+          accelerationY = CAN.parseFloat();
+          break;
 
-      // DAS Gyro Case
-      case gyroscopeRoll_ID:
-        gyroscopeRoll = CAN.parseFloat();
-        break;
+        // DAS Accel Case
+        case accelerationZ_ID:
+          accelerationZ = CAN.parseFloat();
+          break;
 
-      // DAS Gyro Case
-      case gyroscopePitch_ID:
-        gyroscopePitch = CAN.parseFloat();
-        break;
+        // DAS Gyro Case
+        case gyroscopeRoll_ID:
+          gyroscopeRoll = CAN.parseFloat();
+          break;
 
-      // DAS Gyro Case
-      case gyroscopeYaw_ID:
-        gyroscopeYaw = CAN.parseFloat();
-        break;
+        // DAS Gyro Case
+        case gyroscopePitch_ID:
+          gyroscopePitch = CAN.parseFloat();
+          break;
 
-      // DAS GPS Position Case
-      case gpsLatitude_ID:
-        gpsLatitude = CAN.parseFloat();
-        break;
+        // DAS Gyro Case
+        case gyroscopeYaw_ID:
+          gyroscopeYaw = CAN.parseFloat();
+          break;
 
-      // DAS GPS Position Case
-      case gpsLongitude_ID:
-        gpsLongitude = CAN.parseFloat();
-        break;
+        // DAS GPS Position Case
+        case gpsLatitude_ID:
+          gpsLatitude = CAN.parseFloat();
+          break;
 
-      // DAS GPS Time Case
-      case gpsTimeHour_ID:
-        gpsTimeHour = CAN.parseInt();
-        break;
+        // DAS GPS Position Case
+        case gpsLongitude_ID:
+          gpsLongitude = CAN.parseFloat();
+          break;
 
-      // DAS GPS Time Case
-      case gpsTimeMinute_ID:
-        gpsTimeMinute = CAN.parseInt();
-        break;
+        // DAS GPS Time Case
+        case gpsTimeHour_ID:
+          gpsTimeHour = CAN.parseInt();
+          break;
 
-      // DAS GPS Time Case
-      case gpsTimeSecond_ID:
-        gpsTimeSecond = CAN.parseInt();
-        break;
+        // DAS GPS Time Case
+        case gpsTimeMinute_ID:
+          gpsTimeMinute = CAN.parseInt();
+          break;
 
-      // DAS GPS Date Case
-      case gpsDateMonth_ID:
-        gpsDateMonth = CAN.parseInt();
-        break;
+        // DAS GPS Time Case
+        case gpsTimeSecond_ID:
+          gpsTimeSecond = CAN.parseInt();
+          break;
 
-      // DAS GPS Date Case
-      case gpsDateDay_ID:
-        gpsDateDay = CAN.parseInt();
-        break;
+        // DAS GPS Date Case
+        case gpsDateMonth_ID:
+          gpsDateMonth = CAN.parseInt();
+          break;
 
-      // DAS GPS Date Case
-      case gpsDateYear_ID:
-        gpsDateYear = CAN.parseInt();
-        break;
+        // DAS GPS Date Case
+        case gpsDateDay_ID:
+          gpsDateDay = CAN.parseInt();
+          break;
 
-      // DAS GPS Altitude Case
-      case gpsAltitude_ID:
-        gpsAltitude = CAN.parseInt();
-        break;
+        // DAS GPS Date Case
+        case gpsDateYear_ID:
+          gpsDateYear = CAN.parseInt();
+          break;
 
-      // DAS GPS Heading Case
-      case gpsHeading_ID:
-        gpsHeading = CAN.parseInt();
-        break;
+        // DAS GPS Altitude Case
+        case gpsAltitude_ID:
+          gpsAltitude = CAN.parseInt();
+          break;
 
-      // DAS GPS Velocity Case
-      case gpsVelocity_ID:
-        gpsVelocity = CAN.parseInt();
-        break;
+        // DAS GPS Heading Case
+        case gpsHeading_ID:
+          gpsHeading = CAN.parseInt();
+          break;
 
-      // DAS Battery Percentage Case
-      case batteryPercentage_ID:
-        batteryPercentage = CAN.parseInt();
-        break;
+        // DAS GPS Velocity Case
+        case gpsVelocity_ID:
+          gpsVelocity = CAN.parseInt();
+          break;
 
-      // Dashboard SD Logging Active Case
-      case sdLoggingActive_ID:
-        sdLoggingActive = CAN.parseInt();
-        break;
+        // DAS Battery Percentage Case
+        case batteryPercentage_ID:
+          batteryPercentage = CAN.parseInt();
+          break;
 
-      // Dashboard Data Screenshot Flag Case
-      case dataScreenshotFlag_ID:
-        dataScreenshotFlag = CAN.parseInt();
-        break;
+        // Dashboard SD Logging Active Case
+        case sdLoggingActive_ID:
+          sdLoggingActive = CAN.parseInt();
+          break;
 
-      default:
-        Serial.print("Unrecognized CAN ID: ");
-        Serial.println(packetId);
+        // Dashboard Data Screenshot Flag Case
+        case dataScreenshotFlag_ID:
+          dataScreenshotFlag = CAN.parseInt();
+          break;
 
-        while (CAN.available())
-        {
-          int value = CAN.read(); // Read each byte individually
-          Serial.print(value);
-        }
-        Serial.println();
-        break;
+        default:
+          Serial.print("Unrecognized CAN ID: ");
+          Serial.println(packetId);
+
+          while (CAN.available()) {
+            int value = CAN.read();  // Read each byte individually
+            Serial.print(value);
+          }
+          Serial.println();
+          break;
       }
     }
 
-    if ((millis() - lastCanSendTime) > canSendInterval)
-    {
+    if ((millis() - lastCanSendTime) > canSendInterval) {
 
       lastCanSendTime = millis();
 
-      delay(canSendInterval / 2); // Delay for half of our send interval. This should allow Watchdog to reset during IDLE without interfering with the functionality of the program. For the default interval (100ms), we provide a 50ms delay
+      delay(canSendInterval / 2);  // Delay for half of our send interval. This should allow Watchdog to reset during IDLE without interfering with the functionality of the program. For the default interval (100ms), we provide a 50ms delay
 
-      switch (currentSubsystem)
-      {
+      switch (currentSubsystem) {
 
-      case CVT:
-        CAN.beginPacket(primaryRPM_ID);
-        CAN.print(primaryRPM);
-        CAN.endPacket();
-
-        CAN.beginPacket(secondaryRPM_ID);
-        CAN.print(secondaryRPM);
-        CAN.endPacket();
-
-        CAN.beginPacket(primaryTemperature_ID);
-        CAN.print(primaryTemperature);
-        CAN.endPacket();
-
-        CAN.beginPacket(secondaryTemperature_ID);
-        CAN.print(secondaryTemperature);
-        CAN.endPacket();
-
-        break;
-
-      case WHEEL_SPEED:
-
-        // WHEEL RPMs
-        CAN.beginPacket(frontLeftWheelSpeed_ID);
-        CAN.print(frontLeftWheelSpeed);
-        CAN.endPacket();
-
-        CAN.beginPacket(frontRightWheelSpeed_ID);
-        CAN.print(frontRightWheelSpeed);
-        CAN.endPacket();
-
-        CAN.beginPacket(rearLeftWheelSpeed_ID);
-        CAN.print(rearLeftWheelSpeed);
-        CAN.endPacket();
-
-        CAN.beginPacket(rearRightWheelSpeed_ID);
-        CAN.print(rearRightWheelSpeed);
-        CAN.endPacket();
-
-        // WHEEL STATES
-        CAN.beginPacket(frontLeftWheelState_ID);
-        CAN.print(frontLeftWheelState);
-        CAN.endPacket();
-
-        CAN.beginPacket(frontRightWheelState_ID);
-        CAN.print(frontRightWheelState);
-        CAN.endPacket();
-
-        CAN.beginPacket(rearLeftWheelState_ID);
-        CAN.print(rearLeftWheelState);
-        CAN.endPacket();
-
-        CAN.beginPacket(rearRightWheelState_ID);
-        CAN.print(rearRightWheelState);
-        CAN.endPacket();
-
-        // SUSPENSION DISPLACEMENTS
-        CAN.beginPacket(frontLeftDisplacement_ID);
-        CAN.print(frontLeftDisplacement);
-        CAN.endPacket();
-
-        CAN.beginPacket(frontRightDisplacement_ID);
-        CAN.print(frontRightDisplacement);
-        CAN.endPacket();
-
-        CAN.beginPacket(rearLeftDisplacement_ID);
-        CAN.print(rearLeftDisplacement);
-        CAN.endPacket();
-
-        CAN.beginPacket(rearRightDisplacement_ID);
-        CAN.print(rearRightDisplacement);
-        CAN.endPacket();
-
-        break;
-
-      case PEDALS:
-        CAN.beginPacket(gasPedalPercentage_ID);
-        CAN.print(gasPedalPercentage);
-        CAN.endPacket();
-
-        CAN.beginPacket(brakePedalPercentage_ID);
-        CAN.print(brakePedalPercentage);
-        CAN.endPacket();
-
-        CAN.beginPacket(frontBrakePressure_ID);
-        CAN.print(frontBrakePressure);
-        CAN.endPacket();
-
-        CAN.beginPacket(rearBrakePressure_ID);
-        CAN.print(rearBrakePressure);
-        CAN.endPacket();
-
-        break;
-
-      case DAS:
-        CAN.beginPacket(accelerationX_ID);
-        CAN.print(accelerationX);
-        CAN.endPacket();
-
-        CAN.beginPacket(accelerationY_ID);
-        CAN.print(accelerationY);
-        CAN.endPacket();
-
-        CAN.beginPacket(accelerationZ_ID);
-        CAN.print(accelerationZ);
-        CAN.endPacket();
-
-        CAN.beginPacket(gyroscopeRoll_ID);
-        CAN.print(gyroscopeRoll);
-        CAN.endPacket();
-
-        CAN.beginPacket(gyroscopePitch_ID);
-        CAN.print(gyroscopePitch);
-        CAN.endPacket();
-
-        CAN.beginPacket(gyroscopeYaw_ID);
-        CAN.print(gyroscopeYaw);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsLatitude_ID);
-        CAN.print(gpsLatitude, 6);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsLongitude_ID);
-        CAN.print(gpsLongitude, 6);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsTimeHour_ID);
-        CAN.print(gpsTimeHour);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsTimeMinute_ID);
-        CAN.print(gpsTimeMinute);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsTimeSecond_ID);
-        CAN.print(gpsTimeSecond);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsDateMonth_ID);
-        CAN.print(gpsDateMonth);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsDateDay_ID);
-        CAN.print(gpsDateDay);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsDateYear_ID);
-        CAN.print(gpsDateYear);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsAltitude_ID);
-        CAN.print(gpsAltitude);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsHeading_ID);
-        CAN.print(gpsHeading);
-        CAN.endPacket();
-
-        CAN.beginPacket(gpsVelocity_ID);
-        CAN.print(gpsVelocity);
-        CAN.endPacket();
-
-        CAN.beginPacket(batteryPercentage_ID);
-        CAN.print(batteryPercentage);
-        CAN.endPacket();
-        break;
-
-      case DASHBOARD:
-        CAN.beginPacket(sdLoggingActive_ID);
-        CAN.print(sdLoggingActive);
-        CAN.endPacket();
-
-        CAN.beginPacket(dataScreenshotFlag_ID);
-        CAN.print(dataScreenshotFlag);
-        CAN.endPacket();
-
-        break;
-        /*
-        case BASE_STATION:
-
-          // The middle number for all of these is three because we are printing three digits to the CAN-Bus
-          // Since we use CAN.print, we are sending ASCII numbers that get parsed back into an integer.
-          // Since we are using a uint8_t, an 8-bit int, we can have at most 255, which is three digits.
-
-          CAN.beginPacket(statusCVT_ID, 3, true);
+        case CVT:
+          CAN.beginPacket(primaryRPM_ID);
+          CAN.print(primaryRPM);
           CAN.endPacket();
 
-          CAN.beginPacket(statusWheels_ID, 3, true);
+          CAN.beginPacket(secondaryRPM_ID);
+          CAN.print(secondaryRPM);
           CAN.endPacket();
 
-          CAN.beginPacket(statusPedals_ID, 3, true);
+          CAN.beginPacket(primaryTemperature_ID);
+          CAN.print(primaryTemperature);
           CAN.endPacket();
 
-          CAN.beginPacket(statusDAS_ID, 3, true);
+          CAN.beginPacket(secondaryTemperature_ID);
+          CAN.print(secondaryTemperature);
           CAN.endPacket();
 
-          CAN.beginPacket(statusDashboard_ID, 3, true);
-          CAN.endPacket();
-          
           break;
-      
-      */
-          }
 
-      
+        case WHEEL_SPEED:
+
+          // WHEEL RPMs
+          CAN.beginPacket(frontLeftWheelSpeed_ID);
+          CAN.print(frontLeftWheelSpeed, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(frontRightWheelSpeed_ID);
+          CAN.print(frontRightWheelSpeed, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(rearLeftWheelSpeed_ID);
+          CAN.print(rearLeftWheelSpeed, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(rearRightWheelSpeed_ID);
+          CAN.print(rearRightWheelSpeed, 2);
+          CAN.endPacket();
+
+          // WHEEL STATES
+          CAN.beginPacket(frontLeftWheelState_ID);
+          CAN.print(frontLeftWheelState);
+          CAN.endPacket();
+
+          CAN.beginPacket(frontRightWheelState_ID);
+          CAN.print(frontRightWheelState);
+          CAN.endPacket();
+
+          CAN.beginPacket(rearLeftWheelState_ID);
+          CAN.print(rearLeftWheelState);
+          CAN.endPacket();
+
+          CAN.beginPacket(rearRightWheelState_ID);
+          CAN.print(rearRightWheelState);
+          CAN.endPacket();
+
+          // SUSPENSION DISPLACEMENTS
+          CAN.beginPacket(frontLeftDisplacement_ID);
+          CAN.print(frontLeftDisplacement, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(frontRightDisplacement_ID);
+          CAN.print(frontRightDisplacement, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(rearLeftDisplacement_ID);
+          CAN.print(rearLeftDisplacement, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(rearRightDisplacement_ID);
+          CAN.print(rearRightDisplacement, 2);
+          CAN.endPacket();
+
+          break;
+
+        case PEDALS:
+          CAN.beginPacket(gasPedalPercentage_ID);
+          CAN.print(gasPedalPercentage);
+          CAN.endPacket();
+
+          CAN.beginPacket(brakePedalPercentage_ID);
+          CAN.print(brakePedalPercentage);
+          CAN.endPacket();
+
+          CAN.beginPacket(frontBrakePressure_ID);
+          CAN.print(frontBrakePressure);
+          CAN.endPacket();
+
+          CAN.beginPacket(rearBrakePressure_ID);
+          CAN.print(rearBrakePressure);
+          CAN.endPacket();
+
+          break;
+
+        case DAS:
+          CAN.beginPacket(accelerationX_ID);
+          CAN.print(accelerationX, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(accelerationY_ID);
+          CAN.print(accelerationY, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(accelerationZ_ID);
+          CAN.print(accelerationZ, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(gyroscopeRoll_ID);
+          CAN.print(gyroscopeRoll, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(gyroscopePitch_ID);
+          CAN.print(gyroscopePitch, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(gyroscopeYaw_ID);
+          CAN.print(gyroscopeYaw, 2);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsLatitude_ID);
+          CAN.print(gpsLatitude, 6);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsLongitude_ID);
+          CAN.print(gpsLongitude, 6);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsTimeHour_ID);
+          CAN.print(gpsTimeHour);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsTimeMinute_ID);
+          CAN.print(gpsTimeMinute);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsTimeSecond_ID);
+          CAN.print(gpsTimeSecond);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsDateMonth_ID);
+          CAN.print(gpsDateMonth);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsDateDay_ID);
+          CAN.print(gpsDateDay);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsDateYear_ID);
+          CAN.print(gpsDateYear);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsAltitude_ID);
+          CAN.print(gpsAltitude);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsHeading_ID);
+          CAN.print(gpsHeading);
+          CAN.endPacket();
+
+          CAN.beginPacket(gpsVelocity_ID);
+          CAN.print(gpsVelocity);
+          CAN.endPacket();
+
+          CAN.beginPacket(batteryPercentage_ID);
+          CAN.print(batteryPercentage);
+          CAN.endPacket();
+          break;
+
+        case DASHBOARD:
+          CAN.beginPacket(sdLoggingActive_ID);
+          CAN.print(sdLoggingActive);
+          CAN.endPacket();
+
+          CAN.beginPacket(dataScreenshotFlag_ID);
+          CAN.print(dataScreenshotFlag);
+          CAN.endPacket();
+
+          break;
+         
+      }
     }
   }
 }
