@@ -1,5 +1,11 @@
 #include "src/libraries/BajaCAN.h"  // https://arduino.github.io/arduino-cli/0.35/sketch-specification/#src-subfolder
 
+// Set to TRUE for debugging, set to FALSE for final release
+// Disabling Serial on final release allows for better performance
+#define DEBUG false
+#define DEBUG_SERIAL \
+  if (DEBUG) Serial
+
 const int gasPedalAnalogMin = 165;
 const int gasPedalAnalogMax = 2845;
 
@@ -71,30 +77,30 @@ void loop() {
   frontBrakeVoltage = frontBrakeVoltage * (frontBrakeR1 + frontBrakeR2) / frontBrakeR2;
   frontBrakeVoltage = 0.993*frontBrakeVoltage + 0.196; // See comment above about this linear transformation
   frontBrakePressure = floatMap(frontBrakeVoltage, 0.5, 4.5, 0, 1500);
-  Serial.print("frontBrakeAnalogValue:");
-  Serial.print(frontBrakeAnalogValue);
-  Serial.print(", ");
-  Serial.print("frontBrakeVoltage:");
-  Serial.print(frontBrakeVoltage);
-  Serial.print(", ");
-  Serial.print("frontBrakePressure:");
-  Serial.print(frontBrakePressure);
-  Serial.print(", ");
+  DEBUG_SERIAL.print("frontBrakeAnalogValue:");
+  DEBUG_SERIAL.print(frontBrakeAnalogValue);
+  DEBUG_SERIAL.print(", ");
+  DEBUG_SERIAL.print("frontBrakeVoltage:");
+  DEBUG_SERIAL.print(frontBrakeVoltage);
+  DEBUG_SERIAL.print(", ");
+  DEBUG_SERIAL.print("frontBrakePressure:");
+  DEBUG_SERIAL.print(frontBrakePressure);
+  DEBUG_SERIAL.print(", ");
 
   rearBrakeAnalogValue = analogRead(rearBrakePressurePin);
   rearBrakeVoltage = (float)rearBrakeAnalogValue / 4095.0 * 3.3;
   rearBrakeVoltage = rearBrakeVoltage * (rearBrakeR1 + rearBrakeR2) / rearBrakeR2;
   rearBrakeVoltage = rearBrakeVoltage * 0.993 + 0.196;  // See comment above about this linear transformation
   rearBrakePressure = floatMap(rearBrakeVoltage, 0.5, 4.5, 0, 1500);
-  Serial.print("rearBrakeAnalogValue:");
-  Serial.print(rearBrakeAnalogValue);
-  Serial.print(", ");
-  Serial.print("rearBrakeVoltage:");
-  Serial.print(rearBrakeVoltage);
-  Serial.print(", ");
-  Serial.print("rearBrakePressure:");
-  Serial.print(rearBrakePressure);
-  Serial.print(", ");
+  DEBUG_SERIAL.print("rearBrakeAnalogValue:");
+  DEBUG_SERIAL.print(rearBrakeAnalogValue);
+  DEBUG_SERIAL.print(", ");
+  DEBUG_SERIAL.print("rearBrakeVoltage:");
+  DEBUG_SERIAL.print(rearBrakeVoltage);
+  DEBUG_SERIAL.print(", ");
+  DEBUG_SERIAL.print("rearBrakePressure:");
+  DEBUG_SERIAL.print(rearBrakePressure);
+  DEBUG_SERIAL.print(", ");
 
 
 
@@ -105,11 +111,11 @@ void loop() {
   if (gasPedalAnalogValue > gasPedalAnalogMax) gasPedalAnalogValue = gasPedalAnalogMax;
 
   gasPedalPercentage = map(gasPedalAnalogValue, gasPedalAnalogMin, gasPedalAnalogMax, 0, 100);
-  Serial.print("gasPedalAnalogValue:");
-  Serial.print(gasPedalAnalogValue);
-  Serial.print(", ");
-  Serial.print("gasPedalPercentage:");
-  Serial.println(gasPedalPercentage);
+  DEBUG_SERIAL.print("gasPedalAnalogValue:");
+  DEBUG_SERIAL.print(gasPedalAnalogValue);
+  DEBUG_SERIAL.print(", ");
+  DEBUG_SERIAL.print("gasPedalPercentage:");
+  DEBUG_SERIAL.println(gasPedalPercentage);
 
   // Short delay for stability;
   delay(2);
