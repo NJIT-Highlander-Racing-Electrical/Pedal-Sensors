@@ -1,6 +1,6 @@
 /*********************************************************************************
 *
-*   BajaCAN.h  -- Version 1.5.0
+*   BajaCAN.h  -- Version 1.5.1
 *
 *   The goal of this BajaCAN header/driver is to enable all subsystems throughout
 *   the vehicle to use the same variables, data types, and functions. That way,
@@ -113,7 +113,7 @@
 #define CAN_RX_GPIO 26
 
 // Number of milliseconds to wait between transmissions
-int canSendInterval = 50;
+int canSendInterval = 25;
 // Definition to log the last time that a CAN message was sent
 int lastCanSendTime = 0;
 
@@ -579,24 +579,7 @@ void CAN_Task_Code(void *pvParameters) {
           CAN.beginPacket(rearRightWheelSpeed_ID);
           CAN.print(rearRightWheelSpeed, 2);
           CAN.endPacket();
-
-          // WHEEL STATES
-          CAN.beginPacket(frontLeftWheelState_ID);
-          CAN.print(frontLeftWheelState);
-          CAN.endPacket();
-
-          CAN.beginPacket(frontRightWheelState_ID);
-          CAN.print(frontRightWheelState);
-          CAN.endPacket();
-
-          CAN.beginPacket(rearLeftWheelState_ID);
-          CAN.print(rearLeftWheelState);
-          CAN.endPacket();
-
-          CAN.beginPacket(rearRightWheelState_ID);
-          CAN.print(rearRightWheelState);
-          CAN.endPacket();
-
+          
           // SUSPENSION DISPLACEMENTS
           CAN.beginPacket(frontLeftDisplacement_ID);
           CAN.print(frontLeftDisplacement, 2);
