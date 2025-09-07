@@ -1,4 +1,4 @@
-#include "BajaCAN.h"  // https://arduino.github.io/arduino-cli/0.35/sketch-specification/#src-subfolder
+#include "BajaCAN.h"
 
 // Set to TRUE for debugging, set to FALSE for final release
 // Disabling Serial on final release allows for better performance
